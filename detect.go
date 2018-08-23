@@ -24,11 +24,6 @@ import (
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
 
-var (
-	session *tf.Session
-	graph   *tf.Graph
-)
-
 func drawRect(img *image.RGBA, r image.Rectangle, c color.Color) {
 	for x := r.Min.X; x <= r.Max.X; x++ {
 		img.Set(x, r.Min.Y, c)
@@ -99,7 +94,7 @@ func makeTensorFromImage(img []byte) (*tf.Tensor, image.Image, error) {
 	return normalized[0], i, nil
 }
 
-func detectObjects(graph *tf.Graph, input *tf.Tensor) ([]float32, []float32, [][]float32, error) {
+func detectObjects(session *tf.Session, graph *tf.Graph, input *tf.Tensor) ([]float32, []float32, [][]float32, error) {
 	inputop := graph.Operation("image_tensor")
 	output, err := session.Run(
 		map[tf.Output]*tf.Tensor{
@@ -143,7 +138,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	session, err = tf.NewSession(graph, nil)
+	session, err := tf.NewSession(graph, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -170,7 +165,7 @@ func main() {
 		log.Fatalf("error making input tensor: %v", err)
 	}
 
-	probabilities, classes, boxes, err := detectObjects(graph, tensor)
+	probabilities, classes, boxes, err := detectObjects(session, graph, tensor)
 	if err != nil {
 		log.Fatalf("error making prediction: %v", err)
 	}
