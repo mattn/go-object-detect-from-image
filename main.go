@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"go/build"
 	"image"
 	"image/color"
 	"image/draw"
@@ -121,7 +122,7 @@ func main() {
 	var dir string
 	var output string
 	flag.Float64Var(&probability, "prob", 0.4, "Probability")
-	flag.StringVar(&dir, "dir", ".", "Directory containing the trained model and labels files")
+	flag.StringVar(&dir, "dir", filepath.Join(filepath.SplitList(build.Default.GOPATH)[0], "src/github.com/mattn/go-object-detect-from-image"), "Directory containing the trained model and labels files")
 	flag.StringVar(&output, "output", "output.jpg", "Output file name")
 	flag.Parse()
 	if flag.NArg() == 0 {
