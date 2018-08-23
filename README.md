@@ -20,6 +20,8 @@ tensorflow 1.10
 $ go get github.com/mattn/go-object-detect-from-miage
 ```
 
+frozen_inference_graph.pb is archived in ssd_mobilenet_v1_coco_11_06_2017.tar.gz
+
 ## License
 
 MIT
