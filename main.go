@@ -25,6 +25,16 @@ import (
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
 
+func drawString(img *image.RGBA, p image.Point, c color.Color, s string) {
+	d := &font.Drawer{
+		Dst:  img,
+		Src:  image.NewUniform(c),
+		Face: basicfont.Face7x13,
+		Dot:  fixed.Point26_6{fixed.Int26_6(p.X * 64), fixed.Int26_6(p.Y * 64)},
+	}
+	d.DrawString(s)
+}
+
 func drawRect(img *image.RGBA, r image.Rectangle, c color.Color) {
 	for x := r.Min.X; x <= r.Max.X; x++ {
 		img.Set(x, r.Min.Y, c)
@@ -187,15 +197,11 @@ func main() {
 		y2 := int(float64(bounds.Min.Y) + float64(bounds.Dy())*float64(boxes[i][2]))
 		x2 := int(float64(bounds.Min.X) + float64(bounds.Dx())*float64(boxes[i][3]))
 		drawRect(canvas, image.Rect(x1, y1, x2, y2), color.RGBA{255, 0, 0, 0})
-		c := colornames.Map[colornames.Names[idx]]
-		point := fixed.Point26_6{fixed.Int26_6(x1 * 64), fixed.Int26_6(y1 * 64)}
-		d := &font.Drawer{
-			Dst:  canvas,
-			Src:  image.NewUniform(c),
-			Face: basicfont.Face7x13,
-			Dot:  point,
-		}
-		d.DrawString(fmt.Sprintf("%s (%2.0f%%)", labels[idx], probabilities[idx]*100.0))
+		drawString(
+			canvas,
+			image.Pt(x1, y1),
+			colornames.Map[colornames.Names[idx]],
+			fmt.Sprintf("%s (%2.0f%%)", labels[idx], probabilities[idx]*100.0))
 		i++
 	}
 
