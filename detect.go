@@ -121,10 +121,10 @@ func main() {
 	var dir string
 	var output string
 	flag.Float64Var(&probability, "prob", 0.4, "Probability")
-	flag.StringVar(&dir, "dir", "frozen_inference_graph.pb", "Directory containing the trained model and labels files")
+	flag.StringVar(&dir, "dir", ".", "Directory containing the trained model and labels files")
 	flag.StringVar(&output, "output", "output.jpg", "Output file name")
 	flag.Parse()
-	if dir == "" {
+	if flag.NArg() == 0 {
 		flag.Usage()
 		return
 	}
