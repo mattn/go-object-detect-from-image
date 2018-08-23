@@ -7,7 +7,7 @@ detect objects from image file
 ## Usage
 
 ```
-./detect input.jpg
+./go-object-detect-from-image input.jpg
 ```
 
 ## Requirements
