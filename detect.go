@@ -117,18 +117,21 @@ func detectObjects(session *tf.Session, graph *tf.Graph, input *tf.Tensor) ([]fl
 }
 
 func main() {
-	dir := flag.String("dir", "frozen_inference_graph.pb", "Directory containing the trained model and labels files.")
+	var probability float64
+	var dir string
+	flag.Float64Var(&probability, "prob", 0.4, "Probability")
+	flag.StringVar(&dir, "dir", "frozen_inference_graph.pb", "Directory containing the trained model and labels files.")
 	flag.Parse()
-	if *dir == "" {
+	if dir == "" {
 		flag.Usage()
 		return
 	}
-	model, err := ioutil.ReadFile(filepath.Join(*dir, "frozen_inference_graph.pb"))
+	model, err := ioutil.ReadFile(filepath.Join(dir, "frozen_inference_graph.pb"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	labels, err := loadLabels(filepath.Join(*dir, "coco_labels.txt"))
+	labels, err := loadLabels(filepath.Join(dir, "coco_labels.txt"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -174,7 +177,7 @@ func main() {
 	canvas := image.NewRGBA(bounds)
 	draw.Draw(canvas, bounds, img, image.Pt(0, 0), draw.Src)
 	i := 0
-	for probabilities[i] > 0.4 {
+	for float64(probabilities[i]) > probability {
 		idx := int(classes[i])
 		y1 := int(float64(bounds.Min.Y) + float64(bounds.Dy())*float64(boxes[i][0]))
 		x1 := int(float64(bounds.Min.X) + float64(bounds.Dx())*float64(boxes[i][1]))
