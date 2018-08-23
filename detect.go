@@ -119,8 +119,10 @@ func detectObjects(session *tf.Session, graph *tf.Graph, input *tf.Tensor) ([]fl
 func main() {
 	var probability float64
 	var dir string
+	var output string
 	flag.Float64Var(&probability, "prob", 0.4, "Probability")
-	flag.StringVar(&dir, "dir", "frozen_inference_graph.pb", "Directory containing the trained model and labels files.")
+	flag.StringVar(&dir, "dir", "frozen_inference_graph.pb", "Directory containing the trained model and labels files")
+	flag.StringVar(&output, "output", "output.jpg", "Output file name")
 	flag.Parse()
 	if dir == "" {
 		flag.Usage()
@@ -196,7 +198,7 @@ func main() {
 		i++
 	}
 
-	out, err := os.Create("output.jpg")
+	out, err := os.Create(output)
 	if err != nil {
 		log.Fatal(err)
 	}
