@@ -2,6 +2,8 @@
 
 detect objects from image file
 
+![](https://raw.githubusercontent.com/mattn/go-object-detect-from-image/master/output.jpg)
+
 ## Usage
 
 ```
