@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"go/build"
@@ -24,6 +25,11 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 	"github.com/tensorflow/tensorflow/tensorflow/go/op"
 )
+
+type jsonResult struct {
+	Name        string  `json:"name"`
+	Probability float64 `json:"probability"`
+}
 
 func drawString(img *image.RGBA, p image.Point, c color.Color, s string) {
 	d := &font.Drawer{
@@ -128,9 +134,12 @@ func detectObjects(session *tf.Session, graph *tf.Graph, input *tf.Tensor) ([]fl
 }
 
 func main() {
+	var jsoninfo bool
 	var probability float64
 	var dir string
 	var output string
+
+	flag.BoolVar(&jsoninfo, "json", false, "Output JSON information (instead of output image)")
 	flag.Float64Var(&probability, "prob", 0.4, "Probability")
 	flag.StringVar(&dir, "dir", filepath.Join(filepath.SplitList(build.Default.GOPATH)[0], "src/github.com/mattn/go-object-detect-from-image"), "Directory containing the trained model and labels files")
 	flag.StringVar(&output, "output", "output.jpg", "Output file name")
@@ -139,6 +148,9 @@ func main() {
 		flag.Usage()
 		return
 	}
+
+	os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
+
 	model, err := ioutil.ReadFile(filepath.Join(dir, "frozen_inference_graph.pb"))
 	if err != nil {
 		log.Fatal(err)
@@ -184,6 +196,21 @@ func main() {
 	probabilities, classes, boxes, err := detectObjects(session, graph, tensor)
 	if err != nil {
 		log.Fatalf("error making prediction: %v", err)
+	}
+
+	if jsoninfo {
+		var result []jsonResult
+		i := 0
+		for float64(probabilities[i]) > probability {
+			idx := int(classes[i])
+			result = append(result, jsonResult{
+				Name:        labels[idx],
+				Probability: float64(probabilities[idx]),
+			})
+			i++
+		}
+		json.NewEncoder(os.Stdout).Encode(result)
+		return
 	}
 
 	bounds := img.Bounds()
