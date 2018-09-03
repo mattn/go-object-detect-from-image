@@ -17,7 +17,7 @@ tensorflow 1.10
 ## Installation
 
 ```
-$ go get github.com/mattn/go-object-detect-from-miage
+$ go get github.com/mattn/go-object-detect-from-image
 ```
 
 frozen_inference_graph.pb is archived in ssd_mobilenet_v1_coco_11_06_2017.tar.gz
