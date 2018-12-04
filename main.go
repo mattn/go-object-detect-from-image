@@ -204,7 +204,7 @@ func main() {
 			idx := int(classes[i])
 			result = append(result, jsonResult{
 				Name:        labels[idx],
-				Probability: float64(probabilities[idx]),
+				Probability: float64(probabilities[i]),
 			})
 			i++
 		}
