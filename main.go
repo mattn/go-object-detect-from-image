@@ -227,7 +227,7 @@ func main() {
 			canvas,
 			image.Pt(x1, y1),
 			colornames.Map[colornames.Names[idx]],
-			fmt.Sprintf("%s (%2.0f%%)", labels[idx], probabilities[idx]*100.0))
+			fmt.Sprintf("%s (%3.0f%%)", labels[idx], probabilities[i]*100.0))
 		i++
 	}
 
