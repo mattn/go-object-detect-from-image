@@ -144,12 +144,6 @@ func main() {
 	flag.StringVar(&dir, "dir", filepath.Join(filepath.SplitList(build.Default.GOPATH)[0], "src/github.com/mattn/go-object-detect-from-image"), "Directory containing the trained model and labels files")
 	flag.StringVar(&output, "output", "output.jpg", "Output file name")
 	flag.Parse()
-	if flag.NArg() == 0 {
-		flag.Usage()
-		return
-	}
-
-	os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	model, err := ioutil.ReadFile(filepath.Join(dir, "frozen_inference_graph.pb"))
 	if err != nil {
@@ -172,11 +166,16 @@ func main() {
 	}
 	defer session.Close()
 
-	f, err := os.Open(flag.Arg(0))
-	if err != nil {
-		log.Fatal(err)
+	var f *os.File
+	if flag.NArg() == 1 {
+		f, err = os.Open(flag.Arg(0))
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+	} else {
+		f = os.Stdin
 	}
-	defer f.Close()
 	img, _, err := image.Decode(f)
 	if err != nil {
 		log.Fatal(err)
